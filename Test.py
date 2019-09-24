@@ -42,13 +42,13 @@ def localize_objects(image):
     objects = client.object_localization(
         image=image).localized_object_annotations
 
-    print('Number of objects found: {}'.format(len(objects)))
+    #print('Number of objects found: {}'.format(len(objects)))
     for object_ in objects:
-        print('\n{} (confidence: {})'.format(object_.name, object_.score))
+        #print('\n{} (confidence: {})'.format(object_.name, object_.score))
         area = 0
         if object_.name == 'Person':
             vertices = object_.bounding_poly.normalized_vertices
-            print(vertices) #counterclockwise from bottom left
+            #print(vertices) #counterclockwise from bottom left
             length = abs(vertices[0].x - vertices[1].x)
             height = abs(vertices[1].y - vertices[2].y)
             new_area = length*height
@@ -60,28 +60,15 @@ def localize_objects(image):
 
 def decision_maker(new,old):
     if (new-old)> 0.3:
+        print("picked left")
+    elif (new-old)<-0.3:
         print("picked right")
     else:
-        print("picked left")
+        print("none chosen")
 
 def offer_choice(choice1, choice2):
-    print('{} or {}?'.format(choice1, choice2)
+    print('{} or {}?'.format(choice1, choice2))
     
-def image_labeling(image):    
-    response = client.label_detection(image=image)
-    labels = response.label_annotations
-       
-    label_text = ""
-    
-    #this next block of code parses the various labels returned by google,
-    #extracts the text descriptions, and combines them into a single string. 
-    for label in labels:
-        label_text += ''.join([label.description, " "])
-    
-    #if labels are identified, send the sound files, search strings, and label
-    #text to speaker_out()
-    if label_text:
-        print('image_labeling(): {}'.format(label_text))
         
 def main():
     
@@ -105,7 +92,7 @@ def main():
         #convert the image file to a GCP Vision-friendly type
         image = vision.types.Image(content=content)
         (oldx,oldy) = localize_objects(image)
-        time.sleep(10)
+        time.sleep(5)
     
     takephoto(camera)
     with open('image.jpg', 'rb') as image_file:
