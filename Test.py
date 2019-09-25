@@ -59,9 +59,10 @@ def localize_objects(image):
                 return center_x,center_y
 
 def decision_maker(new,old):
-    if (new-old)> 0.3:
+    print(new-old)
+    if (new-old)> 0.04:
         print("picked left")
-    elif (new-old)<-0.3:
+    elif (new-old)<-0.04:
         print("picked right")
     else:
         print("none chosen")
@@ -92,7 +93,7 @@ def main():
         #convert the image file to a GCP Vision-friendly type
         image = vision.types.Image(content=content)
         (oldx,oldy) = localize_objects(image)
-        time.sleep(5)
+        time.sleep(0.5)
     
     takephoto(camera)
     with open('image.jpg', 'rb') as image_file:
