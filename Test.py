@@ -62,11 +62,11 @@ def localize_objects(image):
 def decision_maker(new,old):
     print(new-old)
     if (new-old)> 0.04:
-        print("picked left")
-        return "left"
-    elif (new-old)<-0.04:
         print("picked right")
         return "right"
+    elif (new-old)<-0.04:
+        print("picked left")
+        return "left"
     else:
         print("none chosen")
         return "none"
@@ -110,7 +110,7 @@ def main():
             decision= decision_maker(x,oldx)
             answers.append(decision)
             if decision == "right":
-                lcd.showCustomMesage(q[0])
+                lcd.showCustomMessage(q[0])
             elif decision == "left":
                 lcd.showCustomMessage(q[1])
             else:
