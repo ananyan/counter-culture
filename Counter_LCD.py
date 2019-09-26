@@ -10,8 +10,8 @@ class LCD:
     def setup(self):
         global lcd
         lcd_rs = digitalio.DigitalInOut(board.D26)
-        lcd_en = digitalio.DigitalInOut(board.D19)
-        lcd_d7 = digitalio.DigitalInOut(board.D27)
+        lcd_en = digitalio.DigitalInOut(board.D13)
+        lcd_d7 = digitalio.DigitalInOut(board.D6)
         lcd_d6 = digitalio.DigitalInOut(board.D22)
         lcd_d5 = digitalio.DigitalInOut(board.D24)
         lcd_d4 = digitalio.DigitalInOut(board.D25)
