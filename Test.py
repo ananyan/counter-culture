@@ -5,13 +5,14 @@ import os           #communicate with os/command line
 from google.cloud import vision  #gcp vision library
 from time import sleep
 from adafruit_crickit import crickit
+from Counter_LCD import LCD
 import time
 import signal
 import sys
 import re           #regular expression lib for string searches!
 
 #set up your GCP credentials - replace the " " in the following line with your .json file and path
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pi/DET-2019-7ea81a376ed2.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pi/Desktop/gcp_credentials.json"
 
 # this line connects to Google Cloud Vision! 
 client = vision.ImageAnnotatorClient()
@@ -62,14 +63,14 @@ def decision_maker(new,old):
     print(new-old)
     if (new-old)> 0.04:
         print("picked left")
+        return "left"
     elif (new-old)<-0.04:
         print("picked right")
+        return "right"
     else:
         print("none chosen")
+        return "none"
 
-def offer_choice(choice1, choice2):
-    print('{} or {}?'.format(choice1, choice2))
-    
         
 def main():
     
@@ -84,27 +85,38 @@ def main():
     #this while loop lets the script run until you ctrl+c (command line)
     #or press 'stop' (Thonny IDE)
     #while True:
-    offer_choice('Hot','Cold')
-    takephoto(camera) # First take a picture
-    """Run localization request on a single image"""
-    with open('image.jpg', 'rb') as image_file:
-        #read the image file
-        content = image_file.read()
-        #convert the image file to a GCP Vision-friendly type
-        image = vision.types.Image(content=content)
-        (oldx,oldy) = localize_objects(image)
-        time.sleep(0.5)
-    
-    takephoto(camera)
-    with open('image.jpg', 'rb') as image_file:
-        #read the image file
-        content = image_file.read()
-        #convert the image file to a GCP Vision-friendly type
-        image = vision.types.Image(content=content)
-        (x,y)=localize_objects(image)
-        decision_maker(x,oldx)
-        (oldx, oldy) = (x,y)
-        time.sleep(5)        
+    lcd = LCD()
+    questions = [("Hot", "Cold"), ("Coffee", "Tea"), ("Caff.","Decaf")]
+    answers = []
+    for q in questions:
+        lcd.askQuestion(q[0], q[1])
+        takephoto(camera) # First take a picture
+        """Run localization request on a single image"""
+        with open('image.jpg', 'rb') as image_file:
+            #read the image file
+            content = image_file.read()
+            #convert the image file to a GCP Vision-friendly type
+            image = vision.types.Image(content=content)
+            (oldx,oldy) = localize_objects(image)
+            time.sleep(0.5)
+        
+        takephoto(camera)
+        with open('image.jpg', 'rb') as image_file:
+            #read the image file
+            content = image_file.read()
+            #convert the image file to a GCP Vision-friendly type
+            image = vision.types.Image(content=content)
+            (x,y)=localize_objects(image)
+            decision= decision_maker(x,oldx)
+            answers.append(decision)
+            if decision == "right":
+                lcd.showCustomMesage(q[0])
+            elif decision == "left":
+                lcd.showCustomMessage(q[1])
+            else:
+                lcd.showCustomMessage("Didn't get\nthat!")
+            #(oldx, oldy) = (x,y)
+            time.sleep(5)        
         
 if __name__ == '__main__':
         main() 
